@@ -1,5 +1,10 @@
 from collections import UserDict
 
+class PhoneError(Exception):
+    def __init__(self, message="not ok number"):
+        self.message = message
+        super().__init__(self.message)
+
 class Field:
     def __init__(self, value):
         self.value = value
@@ -15,7 +20,7 @@ class Name(Field):
 class Phone(Field):
     def __init__(self, phone):
         if len(phone) < 10:
-            phone = '+' + phone
+            raise PhoneError() 
         super().__init__(phone)    
 
 class Record:
@@ -60,7 +65,7 @@ book = AddressBook()
 # Створення запису для John
 john_record = Record("joHn")
 john_record.add_phone("1234567890")
-john_record.add_phone("555555555")
+john_record.add_phone("5555555555")
 book.add_record(john_record)
 
 # Створення та додавання нового запису для Jane
