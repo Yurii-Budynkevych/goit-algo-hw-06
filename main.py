@@ -5,9 +5,6 @@ class PhoneError(Exception):
         self.message = message
         super().__init__(self.message)
 
-class RecordNotFoundError(Exception):
-    pass
-
 class Field:
     def __init__(self, value: str):
         self.value = value
@@ -35,10 +32,16 @@ class Record:
         new_phone = Phone(phone) 
         self.phones.append(new_phone)
 
-    def edit_phone (self, phone: str, edited_phone: str) -> None:
+    def edit_phone(self, phone: str, edited_phone: str) -> None:
         for el in self.phones:
             if el.value == phone:
-                el.value = edited_phone
+                try:
+                    new_phone = Phone(edited_phone)
+                except PhoneError:
+                    raise ValueError("New phone is invalid.")
+                el.value = new_phone.value
+                return
+        raise ValueError("Old phone not found in contact.")
 
     def find_phone (self, phone: str) -> str | None:
         for el in self.phones:
@@ -55,8 +58,10 @@ class Record:
     def get_value (self) -> str:
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
-class AddressBook(UserDict):
+    def __str__(self) -> str:
+        return self.get_value()
 
+class AddressBook(UserDict):
     def add_record(self, record: Record) -> None:
         self.data[record.name.get_value()] = record
 
@@ -67,6 +72,11 @@ class AddressBook(UserDict):
     
     def delete(self, record_name: str) -> None:
         self.data.pop(record_name) 
+        
+    def __str__(self) -> str:
+        if not self.data:
+            return "Address book is empty."
+        return "\n".join(str(record) for record in self.data.values())
 
 
 
@@ -111,3 +121,7 @@ book.delete("Jane")
 # Виведення всіх записів у книзі
 for name, record in book.data.items():
     print(record)
+
+# str
+print(book.__str__)
+print(jane_record.__str__)
