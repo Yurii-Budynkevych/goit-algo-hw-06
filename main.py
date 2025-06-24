@@ -43,10 +43,10 @@ class Record:
                 return
         raise ValueError("Old phone not found in contact.")
 
-    def find_phone (self, phone: str) -> str | None:
+    def find_phone (self, phone: str) -> Phone | None:
         for el in self.phones:
             if el.value == phone:
-                return phone
+                return el
         return None
     
     def remove_phone(self, phone: str) -> None:
